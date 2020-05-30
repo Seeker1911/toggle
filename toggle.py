@@ -7,7 +7,7 @@ from collections import namedtuple
 
 def toggl():
     sheet = get_latest_sheet()
-    pprint(f'todays timesheet is {sheet}')
+    pprint(f'The most recent timesheet is {sheet}')
     Event = namedtuple('Event', ['tags', 'duration', 'task', 'description', 'start'])
     unique_day = {}
     with open(sheet, 'r') as reader:
@@ -40,10 +40,22 @@ def convert_duration(duration):
 
 
 def get_latest_sheet():
-    downloads = os.path.join(os.path.expanduser('~'), 'Downloads/')
+    downloads = get_platform()
     toggl_files = [x for x in os.listdir(downloads) if x.startswith("Toggl")]
     sheet = get_most_recent_file(downloads, toggl_files)
     return downloads + sheet  # Full path to sheet
+
+
+def get_platform():
+    pprint(f'os: {os.name}')
+    pprint(f'platform: {platform.system()}')
+    if os.name == 'posix':
+        path = os.path.join(os.path.expanduser('~'), 'Downloads/')
+    else:
+        pprint('unsuported os')
+        path = None
+
+    return path
 
 
 def get_most_recent_file(downloads, toggl_files):
@@ -56,7 +68,5 @@ def get_most_recent_file(downloads, toggl_files):
 
 
 if __name__ == "__main__":
-    pprint(f'os name: {os.name}')
-    pprint(f'platform: {platform.system()}')
     toggl()
 
