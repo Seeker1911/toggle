@@ -1,6 +1,7 @@
 import csv
 import os
 import platform
+import sys
 from pprint import pprint
 from collections import namedtuple
 
@@ -10,7 +11,7 @@ def toggl():
     pprint(f'The most recent timesheet is {sheet}')
     Event = namedtuple('Event', ['tags', 'duration', 'task', 'description', 'start'])
     unique_day = {}
-    with open(sheet, 'r') as reader:
+    with open(sheet, 'r', encoding='utf-8') as reader:
         reader = csv.DictReader(reader)
         for row in reader:
             event = Event(row['Tags'], convert_duration(row['Duration']), row['Task'],
@@ -50,10 +51,14 @@ def get_platform():
     pprint(f'os: {os.name}')
     pprint(f'platform: {platform.system()}')
     if os.name == 'posix':
-        path = os.path.join(os.path.expanduser('~'), 'Downloads/')
+        if platform.machine().startswith('iP'):
+            pprint('Running on iOS')
+            path = '/private/var/mobile/Library/Mobile Documents/iCloud~com~omz-software~Pythonista3/Documents/'
+        else:
+            path = os.path.join(os.path.expanduser('~'), 'Downloads/')
     else:
-        pprint('unsuported os')
-        path = None
+        pprint('Please get a real computer.')
+        sys.exit()
 
     return path
 
